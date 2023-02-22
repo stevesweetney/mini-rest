@@ -30,6 +30,6 @@ pub fn loop_breaks(start_after_seconds: u64) {
             .play_raw(prepare_chime().convert_samples())
             .expect("Failed to play chime SFX");
 
-        thread::sleep(Duration::from_secs(120 + rng.gen_range(0..=90)));
+        thread::sleep(Duration::from_secs(150 + rng.gen_range(0..=180)));
     }
 }
