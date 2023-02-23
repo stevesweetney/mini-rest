@@ -15,12 +15,12 @@ struct Args {
 
     /// Minimum time in seconds to work.
     /// Lower bound for random work time
-    #[arg(short, long, default_value_t = 150)]
+    #[arg(short = 'l', long, default_value_t = 150)]
     min_work_time: u64,
 
     /// Maximum time in seconds to work.
     /// Upper bound for random work time
-    #[arg(short, long, default_value_t = 270)]
+    #[arg(short = 'u', long, default_value_t = 270)]
     max_work_time: u64,
 }
 
