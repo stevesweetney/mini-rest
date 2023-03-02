@@ -1,5 +1,6 @@
 use rand::{thread_rng, Rng};
-use rodio::{source::Source, Decoder, OutputStream};
+use rodio::Sink;
+use rodio::{Decoder, OutputStream};
 use std::io::Cursor;
 use std::thread;
 use std::time::Duration;
@@ -18,9 +19,13 @@ pub fn loop_breaks(
     min_work_time: u64,
     max_work_time: u64,
     rest_time: u64,
+    volume: f32,
 ) {
     let (_stream, stream_handle) =
         OutputStream::try_default().expect("Failed to open default audio output stream");
+
+    let sink = Sink::try_new(&stream_handle).expect("Could not create sink from output handle");
+    sink.set_volume(volume);
 
     let mut rng = thread_rng();
 
@@ -28,13 +33,13 @@ pub fn loop_breaks(
     println!("Starting timer!");
 
     loop {
-        stream_handle
-            .play_raw(prepare_chime().convert_samples())
-            .expect("Failed to play chime SFX");
+        sink.append(prepare_chime());
+        sink.sleep_until_end();
+
         thread::sleep(Duration::from_secs(rest_time));
-        stream_handle
-            .play_raw(prepare_chime().convert_samples())
-            .expect("Failed to play chime SFX");
+
+        sink.append(prepare_chime());
+        sink.sleep_until_end();
 
         thread::sleep(Duration::from_secs(
             rng.gen_range(min_work_time..=max_work_time),

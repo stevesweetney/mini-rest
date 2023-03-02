@@ -22,6 +22,11 @@ struct Args {
     /// Upper bound for random work time
     #[arg(short = 'u', long, default_value_t = 270)]
     max_work_time: u64,
+
+    /// Volume of the chime. Valid values are
+    /// in the range [0.0, 1.0]
+    #[arg(short = 'v', long, default_value_t = 1.0)]
+    volume: f32,
 }
 
 fn main() {
@@ -35,10 +40,15 @@ fn main() {
         panic!("{}", message);
     }
 
+    if args.volume > 1.0 || args.volume < 0.0 {
+        panic!("Volume must be in the range [0.0, 1.0]");
+    }
+
     looping::loop_breaks(
         args.start_n,
         args.min_work_time,
         args.max_work_time,
         args.rest_time,
+        args.volume,
     );
 }
