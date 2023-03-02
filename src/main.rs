@@ -26,6 +26,15 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
+
+    if args.min_work_time > args.max_work_time {
+        let message = format!(
+            "Lower bound, {}, must be less than or equal to upper bound, {}",
+            args.min_work_time, args.max_work_time
+        );
+        panic!("{}", message);
+    }
+
     looping::loop_breaks(
         args.start_n,
         args.min_work_time,
