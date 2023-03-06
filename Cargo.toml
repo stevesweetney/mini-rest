@@ -15,4 +15,7 @@ opt-level = "z"
 panic = "abort"
 codegen-units = 1
 lto = true
+
+[profile.release-strip]
+inherits = "release"
 strip = true
