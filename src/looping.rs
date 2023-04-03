@@ -1,3 +1,4 @@
+use super::error::{self, AudioError};
 use rand::{thread_rng, Rng};
 use rodio::Sink;
 use rodio::{Decoder, OutputStream};
@@ -8,10 +9,10 @@ use std::time::Duration;
 const CHIME: &[u8] =
     include_bytes!("../zapsplat_multimedia_alert_mallet_and_chime_positive_004_63862.mp3");
 
-fn prepare_chime<'a>() -> rodio::Decoder<Cursor<&'a [u8]>> {
+fn prepare_chime<'a>() -> error::Result<rodio::Decoder<Cursor<&'a [u8]>>> {
     let cursor = Cursor::new(CHIME);
 
-    Decoder::new(cursor).expect("Chime SFX is not a valid audio file")
+    Decoder::new(cursor).map_err(|_| AudioError)
 }
 
 pub fn loop_breaks(
@@ -20,11 +21,10 @@ pub fn loop_breaks(
     max_work_time: u64,
     rest_time: u64,
     volume: f32,
-) {
-    let (_stream, stream_handle) =
-        OutputStream::try_default().expect("Failed to open default audio output stream");
+) -> error::Result<()> {
+    let (_stream, stream_handle) = OutputStream::try_default().map_err(|_| AudioError)?;
 
-    let sink = Sink::try_new(&stream_handle).expect("Could not create sink from output handle");
+    let sink = Sink::try_new(&stream_handle).map_err(|_| AudioError)?;
     sink.set_volume(volume);
 
     let mut rng = thread_rng();
@@ -33,12 +33,12 @@ pub fn loop_breaks(
     println!("Starting timer!");
 
     loop {
-        sink.append(prepare_chime());
+        sink.append(prepare_chime()?);
         sink.sleep_until_end();
 
         thread::sleep(Duration::from_secs(rest_time));
 
-        sink.append(prepare_chime());
+        sink.append(prepare_chime()?);
         sink.sleep_until_end();
 
         thread::sleep(Duration::from_secs(

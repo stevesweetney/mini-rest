@@ -1,5 +1,6 @@
 use clap::Parser;
 
+mod error;
 mod looping;
 
 #[derive(Parser, Debug)]
@@ -29,7 +30,7 @@ struct Args {
     volume: f32,
 }
 
-fn main() {
+fn main() -> error::Result<()> {
     let args = Args::parse();
 
     if args.min_work_time > args.max_work_time {
@@ -50,5 +51,7 @@ fn main() {
         args.max_work_time,
         args.rest_time,
         args.volume,
-    );
+    )?;
+
+    Ok(())
 }
