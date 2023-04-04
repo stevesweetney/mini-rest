@@ -23,6 +23,7 @@ pub fn loop_breaks(
     rest_time: u64,
     volume: f32,
     is_paused: &Mutex<bool>,
+    should_quit: &Mutex<bool>,
 ) -> error::Result<()> {
     let (_stream, stream_handle) = OutputStream::try_default().map_err(|_| AudioError)?;
 
@@ -45,6 +46,10 @@ pub fn loop_breaks(
             continue;
         }
 
+        if *should_quit.lock().unwrap() {
+            break;
+        }
+
         sink.append(prepare_chime()?);
         sink.sleep_until_end();
 
@@ -53,4 +58,6 @@ pub fn loop_breaks(
         sink.append(prepare_chime()?);
         sink.sleep_until_end();
     }
+
+    Ok(())
 }

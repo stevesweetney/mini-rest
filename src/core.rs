@@ -10,6 +10,7 @@ pub fn main_loop(
     volume: f32,
 ) {
     let is_paused = Mutex::new(false);
+    let should_quit = Mutex::new(false);
 
     thread::scope(|s| {
         let t = s.spawn(|| {
@@ -20,6 +21,7 @@ pub fn main_loop(
                 rest_time,
                 volume,
                 &is_paused,
+                &should_quit,
             ) {
                 eprintln!("Error: {}", e);
             }
@@ -31,16 +33,25 @@ pub fn main_loop(
                 break;
             }
             std::io::stdin().read_line(&mut buffer).unwrap();
-            if buffer.trim() == "p" {
-                let mut guard = is_paused.lock().unwrap();
-                if *guard {
-                    println!("Unpausing");
-                    *guard = false;
-                    t.thread().unpark();
-                } else {
-                    println!("Pausing");
-                    *guard = true;
+
+            match buffer.trim() {
+                "p" => {
+                    let mut guard = is_paused.lock().unwrap();
+                    if *guard {
+                        println!("Unpausing");
+                        *guard = false;
+                        t.thread().unpark();
+                    } else {
+                        println!("Pausing");
+                        *guard = true;
+                    }
                 }
+                "q" => {
+                    println!("Quitting");
+                    *should_quit.lock().unwrap() = true;
+                    break;
+                }
+                _ => println!("Invalid command"),
             }
 
             buffer.clear();
