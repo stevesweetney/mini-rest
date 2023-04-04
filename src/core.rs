@@ -1,4 +1,7 @@
-use crate::looping::loop_breaks;
+mod error;
+mod looping;
+
+use looping::loop_breaks;
 use std::sync::Mutex;
 use std::thread;
 

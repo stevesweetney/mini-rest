@@ -1,8 +1,6 @@
 use clap::Parser;
 
 mod core;
-mod error;
-mod looping;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
