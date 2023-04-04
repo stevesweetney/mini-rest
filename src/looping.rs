@@ -5,7 +5,7 @@ use rodio::{Decoder, OutputStream};
 use std::io::Cursor;
 use std::sync::Mutex;
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 const CHIME: &[u8] =
     include_bytes!("../zapsplat_multimedia_alert_mallet_and_chime_positive_004_63862.mp3");
@@ -35,19 +35,28 @@ pub fn loop_breaks(
     thread::sleep(Duration::from_secs(start_after_seconds));
     println!("Starting timer!");
 
-    loop {
-        thread::sleep(Duration::from_secs(
-            rng.gen_range(min_work_time..=max_work_time),
-        ));
+    let first_work_period = Duration::from_secs(rng.gen_range(min_work_time..=max_work_time))
+        + Duration::from_secs(start_after_seconds);
+    let mut wake_at = Instant::now() + first_work_period;
 
-        if *is_paused.lock().unwrap() {
-            println!("Paused");
-            thread::park();
-            continue;
+    'outer: loop {
+        if Instant::now() > wake_at {
+            wake_at =
+                Instant::now() + Duration::from_secs(rng.gen_range(min_work_time..=max_work_time));
         }
 
-        if *should_quit.lock().unwrap() {
-            break;
+        while Instant::now() < wake_at {
+            if *is_paused.lock().unwrap() {
+                println!("Paused");
+                thread::park();
+                continue 'outer;
+            }
+
+            if *should_quit.lock().unwrap() {
+                break 'outer;
+            }
+
+            thread::sleep(Duration::from_millis(100));
         }
 
         sink.append(prepare_chime()?);
