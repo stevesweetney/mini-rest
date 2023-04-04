@@ -1,5 +1,6 @@
 use clap::Parser;
 
+mod core;
 mod error;
 mod looping;
 
@@ -30,7 +31,7 @@ struct Args {
     volume: f32,
 }
 
-fn main() -> error::Result<()> {
+fn main() {
     let args = Args::parse();
 
     if args.min_work_time > args.max_work_time {
@@ -45,13 +46,11 @@ fn main() -> error::Result<()> {
         panic!("Volume must be in the range [0.0, 1.0]");
     }
 
-    looping::loop_breaks(
+    core::main_loop(
         args.start_n,
         args.min_work_time,
         args.max_work_time,
         args.rest_time,
         args.volume,
-    )?;
-
-    Ok(())
+    );
 }

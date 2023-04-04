@@ -3,6 +3,7 @@ use rand::{thread_rng, Rng};
 use rodio::Sink;
 use rodio::{Decoder, OutputStream};
 use std::io::Cursor;
+use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
 
@@ -21,6 +22,7 @@ pub fn loop_breaks(
     max_work_time: u64,
     rest_time: u64,
     volume: f32,
+    is_paused: &Mutex<bool>,
 ) -> error::Result<()> {
     let (_stream, stream_handle) = OutputStream::try_default().map_err(|_| AudioError)?;
 
@@ -33,6 +35,16 @@ pub fn loop_breaks(
     println!("Starting timer!");
 
     loop {
+        thread::sleep(Duration::from_secs(
+            rng.gen_range(min_work_time..=max_work_time),
+        ));
+
+        if *is_paused.lock().unwrap() {
+            println!("Paused");
+            thread::park();
+            continue;
+        }
+
         sink.append(prepare_chime()?);
         sink.sleep_until_end();
 
@@ -40,9 +52,5 @@ pub fn loop_breaks(
 
         sink.append(prepare_chime()?);
         sink.sleep_until_end();
-
-        thread::sleep(Duration::from_secs(
-            rng.gen_range(min_work_time..=max_work_time),
-        ));
     }
 }
