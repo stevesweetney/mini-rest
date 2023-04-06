@@ -9,9 +9,9 @@ struct Args {
     #[arg(short, long, default_value_t = 10)]
     rest_time: u64,
 
-    /// Start timer after N seconds
+    /// Time to add to first work period
     #[arg(short, long, default_value_t = 300)]
-    start_n: u64,
+    additional_start_time: u64,
 
     /// Minimum time in seconds to work.
     /// Lower bound for random work time
@@ -45,7 +45,7 @@ fn main() {
     }
 
     core::main_loop(
-        args.start_n,
+        args.additional_start_time,
         args.min_work_time,
         args.max_work_time,
         args.rest_time,

@@ -17,7 +17,7 @@ fn prepare_chime<'a>() -> error::Result<rodio::Decoder<Cursor<&'a [u8]>>> {
 }
 
 pub fn loop_breaks(
-    start_after_seconds: u64,
+    additional_start_time: u64,
     min_work_time: u64,
     max_work_time: u64,
     rest_time: u64,
@@ -32,11 +32,10 @@ pub fn loop_breaks(
 
     let mut rng = thread_rng();
 
-    thread::sleep(Duration::from_secs(start_after_seconds));
     println!("Starting timer!");
 
     let first_work_period = Duration::from_secs(rng.gen_range(min_work_time..=max_work_time))
-        + Duration::from_secs(start_after_seconds);
+        + Duration::from_secs(additional_start_time);
     let mut wake_at = Instant::now() + first_work_period;
 
     'outer: loop {
