@@ -3,7 +3,7 @@ use rand::{thread_rng, Rng};
 use rodio::Sink;
 use rodio::{Decoder, OutputStream};
 use std::io::Cursor;
-use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -22,8 +22,8 @@ pub fn loop_breaks(
     max_work_time: u64,
     rest_time: u64,
     volume: f32,
-    is_paused: &Mutex<bool>,
-    should_quit: &Mutex<bool>,
+    is_paused: &AtomicBool,
+    should_quit: &AtomicBool,
 ) -> error::Result<()> {
     let (_stream, stream_handle) = OutputStream::try_default().map_err(|_| AudioError)?;
 
@@ -45,13 +45,13 @@ pub fn loop_breaks(
         }
 
         while Instant::now() < wake_at {
-            if *is_paused.lock().unwrap() {
+            if is_paused.load(Ordering::Acquire) {
                 println!("Paused");
                 thread::park();
                 continue 'outer;
             }
 
-            if *should_quit.lock().unwrap() {
+            if should_quit.load(Ordering::Acquire) {
                 break 'outer;
             }
 

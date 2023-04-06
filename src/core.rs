@@ -2,7 +2,7 @@ mod error;
 mod looping;
 
 use looping::loop_breaks;
-use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 
 pub fn main_loop(
@@ -12,8 +12,8 @@ pub fn main_loop(
     rest_time: u64,
     volume: f32,
 ) {
-    let is_paused = Mutex::new(false);
-    let should_quit = Mutex::new(false);
+    let is_paused = AtomicBool::new(false);
+    let should_quit = AtomicBool::new(false);
 
     thread::scope(|s| {
         let t = s.spawn(|| {
@@ -39,19 +39,18 @@ pub fn main_loop(
 
             match buffer.trim() {
                 "p" => {
-                    let mut guard = is_paused.lock().unwrap();
-                    if *guard {
+                    if is_paused.load(Ordering::Acquire) {
                         println!("Unpausing");
-                        *guard = false;
+                        is_paused.store(false, Ordering::Release);
                         t.thread().unpark();
                     } else {
                         println!("Pausing");
-                        *guard = true;
+                        is_paused.store(true, Ordering::Release);
                     }
                 }
                 "q" => {
                     println!("Quitting");
-                    *should_quit.lock().unwrap() = true;
+                    should_quit.store(true, Ordering::Release);
                     break;
                 }
                 _ => println!("Invalid command"),
