@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.1.6", features = ["derive"] }
 rand = "0.8.5"
-rodio = "0.17.0"
+rodio = { version = "0.17.0", default-features = false, features = ["minimp3"]}
 
 [profile.release]
 opt-level = "z"
