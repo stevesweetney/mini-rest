@@ -25,7 +25,7 @@ struct Args {
 
     /// Volume of the chime. Valid values are
     /// in the range [0.0, 1.0]
-    #[arg(short = 'v', long, default_value_t = 1.0)]
+    #[arg(short = 'v', long, default_value_t = 0.3)]
     volume: f32,
 }
 
