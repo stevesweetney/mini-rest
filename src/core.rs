@@ -4,6 +4,7 @@ mod looping;
 use looping::loop_breaks;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
+use std::time::Duration;
 
 pub fn main_loop(
     additional_start_time: u64,
@@ -57,6 +58,7 @@ pub fn main_loop(
             }
 
             buffer.clear();
+            thread::sleep(Duration::from_millis(100));
         }
     });
 }
