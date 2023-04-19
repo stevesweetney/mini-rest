@@ -27,7 +27,7 @@ pub fn main_loop(
                 &is_paused,
                 &should_quit,
             ) {
-                eprintln!("Error: {}", e);
+                eprintln!("Error: {e}");
             }
         });
 

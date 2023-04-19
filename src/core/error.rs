@@ -8,7 +8,7 @@ const ERROR_DESCRIPTION: &str = "Audio related error";
 
 impl Display for AudioError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", ERROR_DESCRIPTION)
+        write!(f, "{ERROR_DESCRIPTION}")
     }
 }
 

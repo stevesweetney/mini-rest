@@ -42,9 +42,7 @@ fn main() {
         panic!("{}", message);
     }
 
-    if args.volume > 1.0 || args.volume < 0.0 {
-        panic!("Volume must be in the range [0.0, 1.0]");
-    }
+    assert!(!(args.volume > 1.0 || args.volume < 0.0), "Volume must be in the range [0.0, 1.0]");
 
     core::main_loop(
         args.additional_start_time,
