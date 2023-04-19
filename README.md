@@ -13,4 +13,4 @@ I had a need for a simple and non-intrusive timer that looped infinitely
 
 
 ## Attributions
-- Sound effects obtained from https://www.zapsplat.com
+- Sound Effect from [Pixabay](https://pixabay.com/sound-effects/)

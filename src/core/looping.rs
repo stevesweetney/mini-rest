@@ -8,7 +8,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 const CHIME: &[u8] =
-    include_bytes!("../../sounds/zapsplat_multimedia_alert_mallet_and_chime_positive_004_63862.mp3");
+    include_bytes!("../../sounds/timer-sound.mp3");
 
 fn prepare_chime<'a>() -> error::Result<rodio::Decoder<Cursor<&'a [u8]>>> {
     let cursor = Cursor::new(CHIME);
