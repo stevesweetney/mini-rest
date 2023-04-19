@@ -34,15 +34,21 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    if args.min_work_time > args.max_work_time {
-        let message = format!(
-            "Lower bound, {}, must be less than or equal to upper bound, {}",
-            args.min_work_time, args.max_work_time
-        );
-        panic!("{}", message);
-    }
-
-    assert!(!(args.volume > 1.0 || args.volume < 0.0), "Volume must be in the range [0.0, 1.0]");
+    assert!(
+        args.min_work_time <= args.max_work_time,
+        "Lower bound, {}, must be less than or equal to upper bound, {}",
+        args.min_work_time,
+        args.max_work_time
+    );
+    assert!(args.rest_time > 0, "Rest time must be greater than 0");
+    assert!(
+        args.min_work_time > 0,
+        "Min work time must be greater than 0"
+    );
+    assert!(
+        !(args.volume > 1.0 || args.volume < 0.0),
+        "Volume must be in the range [0.0, 1.0]"
+    );
 
     core::main_loop(
         args.additional_start_time,
