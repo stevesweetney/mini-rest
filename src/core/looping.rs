@@ -7,8 +7,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use std::time::{Duration, Instant};
 
-const CHIME: &[u8] =
-    include_bytes!("../../sounds/timer-sound.mp3");
+const CHIME: &[u8] = include_bytes!("../../sounds/timer-sound.mp3");
 
 fn prepare_chime<'a>() -> error::Result<rodio::Decoder<Cursor<&'a [u8]>>> {
     let cursor = Cursor::new(CHIME);
@@ -32,7 +31,7 @@ pub fn loop_breaks(
 
     let mut rng = thread_rng();
 
-    println!("Starting timer!");
+    println!("Starting timer! Press 'p' to pause, 'q' to quit");
 
     let first_work_period = Duration::from_secs(rng.gen_range(min_work_time..=max_work_time))
         + Duration::from_secs(additional_start_time);
@@ -46,7 +45,7 @@ pub fn loop_breaks(
 
         while Instant::now() < wake_at {
             if is_paused.load(Ordering::Acquire) {
-                println!("Paused");
+                println!("Paused. Press 'p' to unpause");
                 thread::park();
                 continue 'outer;
             }

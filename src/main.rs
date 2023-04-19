@@ -2,8 +2,10 @@ use clap::Parser;
 
 mod core;
 
+const ABOUT: &str = "A minimal looping timer. Work for a random period of time, then rest for a fixed period of time. Repeat. Press 'p' to pause/unpause, 'q' to quit.";
+
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about=Some(ABOUT), long_about = None)]
 struct Args {
     /// Time in seconds to rest
     #[arg(short, long, default_value_t = 10)]
